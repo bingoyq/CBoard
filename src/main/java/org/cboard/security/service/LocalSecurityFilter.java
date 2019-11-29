@@ -56,6 +56,15 @@ public class LocalSecurityFilter implements Filter {
             context = hsr.getLocalPort() + hsr.getContextPath();
             schema = hsr.getScheme();
         }
+        if (hsr.getServletPath().indexOf("/shareDashboard/") >= 0) {
+            String sid = hsr.getParameter("sid");
+            User user = new User("shareUser", "", new ArrayList<>());
+            user.setUserId(sid);
+            SecurityContext context = SecurityContextHolder.getContext();
+            context.setAuthentication(new ShareAuthenticationToken(user));
+            hsr.getSession().setAttribute("SPRING_SECURITY_CONTEXT", context);
+        }
+
         if ("/render.html".equals(hsr.getServletPath())) {
             String sid = hsr.getParameter("sid");
             try {
